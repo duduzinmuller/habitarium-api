@@ -8,7 +8,7 @@
     "**/*": "prettier --write --ignore-unknown"
   },
   "scripts": {
-    "dev": "ts-node-dev src/adapters/api/index.ts",
+    "dev": "tsx watch src/index.ts",
     "prepare": "husky"
   },
   "repository": {
@@ -47,6 +47,7 @@
     "prettier": "3.6.2",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
+    "tsx": "^4.20.5",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.43.0"
   }

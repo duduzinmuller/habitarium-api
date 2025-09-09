@@ -1,4 +1,12 @@
-import "dotenv/config";
-import { drizzle } from "drizzle-orm/node-postgres";
+import Fastify from "fastify";
+import { registerRoutes } from "./routes";
 
-const db = drizzle(process.env.NEONDB_URL!);
+async function main() {
+  const app = Fastify({ logger: true });
+
+  await app.register(registerRoutes, { prefix: "/api" });
+
+  await app.listen({ port: 3000 });
+}
+
+main();
