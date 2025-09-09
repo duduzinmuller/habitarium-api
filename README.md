@@ -16,11 +16,11 @@ npm install pg @types/pg
 change tsconfig.json to: "moduleResolution": "nodenext",
 
 ## Alterações no backend
+
 npx drizzle-kit push
 
-
 ## Arquitetura hexagonal
-https://medium.com/@yecaicedo/structuring-a-node-js-project-with-hexagonal-architecture-7be2ef1364e2
 
+https://medium.com/@yecaicedo/structuring-a-node-js-project-with-hexagonal-architecture-7be2ef1364e2
 
 // Controller / Repository / Use Cases -> Factory

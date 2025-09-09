@@ -61,7 +61,7 @@ const init = async () => {
         },
       },
     },
-    (req, reply) => {}
+    (req, reply) => {},
   );
 
   // Run the server!
