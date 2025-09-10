@@ -28,3 +28,8 @@ export const updateUserSchema = z
   .strict();
 
 export type UpdateUserDTO = z.infer<typeof updateUserSchema>;
+
+export const userParamsValidator = z.object({
+  id: z.uuid("id da requisição inválido").optional(),
+  fotoId: z.uuid("fotoId da requisição inválido").optional(),
+});
