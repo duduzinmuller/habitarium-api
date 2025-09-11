@@ -29,7 +29,7 @@ const formatIssues = (err: z.ZodError) =>
     message: issue.message,
   }));
 
-export function zodMiddleware<S extends Schemas>(schemas: S) {
+export function zodValidator<S extends Schemas>(schemas: S) {
   return async (req: FastifyRequest, reply: FastifyReply) => {
     const fail = (err: z.ZodError) =>
       reply.status(400).send({
