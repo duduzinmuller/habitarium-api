@@ -29,6 +29,15 @@ export const updateUserSchema = z
 
 export type UpdateUserDTO = z.infer<typeof updateUserSchema>;
 
+export type UserDTO = {
+  id: string;
+  name: string;
+  email: string;
+  passwordHash: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 export const userParamsValidator = z.object({
   id: z.uuid("id da requisição inválido").optional(),
   fotoId: z.uuid("fotoId da requisição inválido").optional(),

@@ -1,19 +1,19 @@
-import type { FastifyInstance } from "fastify";
+import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { UserFactory } from "../modules/users/user.factory";
 import { zodMiddleware } from "../shared/middleware/zod-validator";
-import {
-  createUserSchema,
-  userParamsValidator,
-} from "../modules/users/user.dto";
+import { userParamsValidator } from "../modules/users/user.dto";
 
 export async function userRoutes(app: FastifyInstance) {
-  app.post(
-    "/",
+  app.get(
+    "/:id",
     {
-      preHandler: [
-        zodMiddleware({ body: createUserSchema, params: userParamsValidator }),
-      ],
+      preHandler: [zodMiddleware({ params: userParamsValidator })],
     },
-    UserFactory.findById
+    async (
+      req: FastifyRequest<{ Params: { id: string } }>,
+      reply: FastifyReply
+    ) => {
+      await UserFactory.findById(req, reply);
+    }
   );
 }
