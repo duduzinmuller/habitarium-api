@@ -9,6 +9,6 @@ export class UserController {
     reply: FastifyReply
   ) {
     const user = await this.service.findById(req.params.id);
-    return reply.code(200).send(user);
+    return reply.status(200).send(user);
   }
 }

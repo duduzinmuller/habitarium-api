@@ -1,19 +1,18 @@
-import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { UserFactory } from "../modules/users/user.factory";
+import type { FastifyInstance } from "fastify";
+import { makeUserController } from "../modules/users/user.factory";
 import { zodValidator } from "../shared/guards/zod-validator";
-import { userParamsValidator } from "../modules/users/user.dto";
+import { userParamsSchema } from "../modules/users/user.entity";
+
+const userController = makeUserController();
 
 export async function userRoutes(app: FastifyInstance) {
-  app.get(
+  app.get<{
+    Params: { id: string };
+  }>(
     "/:id",
-    {
-      preHandler: [zodValidator({ params: userParamsValidator })],
-    },
-    async (
-      req: FastifyRequest<{ Params: { id: string } }>,
-      reply: FastifyReply
-    ) => {
-      await UserFactory.findById(req, reply);
+    { preHandler: [zodValidator({ params: userParamsSchema })] },
+    async (req, reply) => {
+      await userController.findById(req, reply);
     }
   );
 }
