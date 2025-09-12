@@ -23,8 +23,8 @@ export const updateQuestSchema = z
     type: z.string("Type must be a string").optional(),
     difficulty: z.string("Difficulty must be a string").optional(),
     isPaused: z.boolean("isPaused must be a boolean").optional(),
-    dueDate: z.coerce.date("Invalid dueDate").nullable().optional(),
-    frequency: z.string("Frequency must be a string").nullable().optional(),
+    dueDate: z.coerce.date("Invalid dueDate").optional(),
+    frequency: z.string("Frequency must be a string").optional(),
     createdAt: z.coerce.date("Invalid createdAt").optional(),
     updatedAt: z.coerce.date("Invalid updatedAt").optional(),
   })
