@@ -1,9 +1,9 @@
-import { hashPassword } from "../../utils/auth/password";
+import { hashPassword } from "../../utils/auth/hash-password";
 import {
   ConflictError,
   InternalError,
   NotFoundError,
-} from "../../utils/errors";
+} from "../../utils/error-handler";
 import type {
   CreateUserInput,
   UpdateUserInput,

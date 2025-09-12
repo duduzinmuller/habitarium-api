@@ -1,5 +1,5 @@
-import { signAccess, verifyAccess } from "../../utils/auth/token";
-import { AuthRequiredError, NotFoundError } from "../../utils/errors";
+import { signAccess, verifyAccess } from "../../utils/auth/jwt";
+import { AuthRequiredError, NotFoundError } from "../../utils/error-handler";
 import type { CreateUserInput } from "../users/user.entity";
 import type { UserRepository } from "../users/user.repository";
 import type { UserService } from "../users/user.service";

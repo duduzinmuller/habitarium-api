@@ -1,6 +1,6 @@
 import Fastify from "fastify";
 import { registerRoutes } from "./routes/index.routes";
-import { fastifyErrorHandler } from "./utils/errors";
+import { fastifyErrorHandler } from "./utils/error-handler";
 
 async function main() {
   const port = Number(process.env.API_PORT ?? 3000);

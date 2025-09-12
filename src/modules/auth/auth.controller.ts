@@ -2,7 +2,7 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import type { CreateUserInput } from "../users/user.entity";
 import type { AuthResponse, SignInInput } from "./auth.entity";
 import type { AuthService } from "./auth.service";
-import { AuthRequiredError } from "../../utils/errors";
+import { AuthRequiredError } from "../../utils/error-handler";
 
 export class AuthController {
   constructor(private readonly service: AuthService) {}
