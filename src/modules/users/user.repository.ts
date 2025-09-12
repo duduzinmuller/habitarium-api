@@ -7,7 +7,7 @@ import type { UserEntity, UserPublic } from "./user.entity";
 export class UserRepository {
   constructor(private readonly db: Db) {}
 
-  public async findPublicById(id: string): Promise<UserPublic | void> {
+  public async findPublicById(userId: string): Promise<UserPublic | undefined> {
     const [result] = await this.db
       .select({
         id: users.id,
@@ -17,13 +17,25 @@ export class UserRepository {
         updatedAt: users.updatedAt,
       })
       .from(users)
-      .where(eq(users.id, id));
+      .where(eq(users.id, userId));
 
     return result;
   }
 
-  public async findById(id: string): Promise<UserEntity | void> {
-    const [result] = await this.db.select().from(users).where(eq(users.id, id));
+  public async findById(userId: string): Promise<UserEntity | undefined> {
+    const [result] = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId));
+
+    return result;
+  }
+
+  public async findByEmail(email: string): Promise<UserEntity | undefined> {
+    const [result] = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.email, email));
 
     return result;
   }
@@ -42,24 +54,24 @@ export class UserRepository {
     return result;
   }
 
-  public async delete(id: string): Promise<void> {
-    await this.db.delete(users).where(eq(users.id, id));
+  public async delete(userId: string): Promise<void> {
+    await this.db.delete(users).where(eq(users.id, userId));
   }
 
-  public async create(data: UserEntity): Promise<UserEntity | void> {
+  public async create(data: UserEntity): Promise<UserPublic | undefined> {
     const [result] = await this.db.insert(users).values(data).returning();
 
     return result;
   }
 
   public async update(
-    id: string,
+    userId: string,
     data: UserEntity
-  ): Promise<UserPublic | void> {
+  ): Promise<UserPublic | undefined> {
     const [result] = await this.db
       .update(users)
       .set(data)
-      .where(eq(users.id, id))
+      .where(eq(users.id, userId))
       .returning({
         id: users.id,
         email: users.email,

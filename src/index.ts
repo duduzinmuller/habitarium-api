@@ -10,7 +10,7 @@ async function main() {
   await app.register(registerRoutes, { prefix: "/api" });
 
   console.log(app.printRoutes());
-  
+
   await app.listen({ port: 3000 });
 }
 

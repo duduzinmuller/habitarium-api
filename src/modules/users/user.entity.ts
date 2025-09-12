@@ -38,5 +38,5 @@ export type UserEntity = {
 export type UserPublic = Omit<UserEntity, "passwordHash">;
 
 export const userParamsSchema = z.object({
-  id: z.uuid("id da requisição inválido").optional(),
+  userId: z.uuid("userId inválido").optional(),
 });
