@@ -4,19 +4,18 @@ import { zodValidator } from "../shared/guards/zod-validator";
 import {
   createUserSchema,
   updateUserSchema,
-  userParamsSchema,
 } from "../modules/users/user.entity";
 
 const userController = makeUserController();
 
 export async function userRoutes(app: FastifyInstance) {
-  app.get(
-    "/:userId",
-    { preHandler: [zodValidator({ params: userParamsSchema })] },
-    async (req, reply) => {
-      await userController.findById(req, reply);
-    }
-  );
+  app.get("/", async (_req, reply) => {
+    await userController.findMany(reply);
+  });
+
+  app.get("/:userId", async (req, reply) => {
+    await userController.findById(req, reply);
+  });
 
   app.post(
     "/",
@@ -29,12 +28,14 @@ export async function userRoutes(app: FastifyInstance) {
   app.put(
     "/:userId",
     {
-      preHandler: [
-        zodValidator({ body: updateUserSchema, params: userParamsSchema }),
-      ],
+      preHandler: [zodValidator({ body: updateUserSchema })],
     },
     async (req, reply) => {
       await userController.update(req, reply);
     }
   );
+
+  app.delete("/:userId", async (req, reply) => {
+    await userController.delete(req, reply);
+  });
 }

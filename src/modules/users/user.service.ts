@@ -11,6 +11,10 @@ import type { UserRepository } from "./user.repository";
 export class UserService {
   constructor(private readonly repo: UserRepository) {}
 
+  public async findMany(): Promise<UserPublic[]> {
+    return await this.repo.findAllPublic();
+  }
+
   public async findById(id: string): Promise<UserPublic | undefined> {
     const user = await this.repo.findPublicById(id);
 
@@ -80,5 +84,17 @@ export class UserService {
     };
 
     return this.repo.update(userId, updatedEntity);
+  }
+
+  public async delete(userId: string): Promise<void> {
+    const existingUser = await this.repo.findById(userId);
+    if (!existingUser) {
+      throw new NotFoundError("User not found");
+    }
+
+    const userDeleted = await this.repo.delete(userId);
+    if (!userDeleted) {
+      throw new NotFoundError("User not found");
+    }
   }
 }

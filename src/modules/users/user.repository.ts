@@ -54,8 +54,12 @@ export class UserRepository {
     return result;
   }
 
-  public async delete(userId: string): Promise<void> {
-    await this.db.delete(users).where(eq(users.id, userId));
+  public async delete(userId: string): Promise<boolean> {
+    const [result] = await this.db
+      .delete(users)
+      .where(eq(users.id, userId))
+      .returning();
+    return !!result;
   }
 
   public async create(data: UserEntity): Promise<UserPublic | undefined> {

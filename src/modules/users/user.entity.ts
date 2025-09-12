@@ -36,7 +36,3 @@ export type UserEntity = {
 };
 
 export type UserPublic = Omit<UserEntity, "passwordHash">;
-
-export const userParamsSchema = z.object({
-  userId: z.uuid("userId inválido").optional(),
-});
