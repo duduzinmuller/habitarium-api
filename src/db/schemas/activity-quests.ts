@@ -11,6 +11,13 @@ export const activityQuests = pgTable("activity_quests", {
     .notNull()
     .references(() => characters.id, { onDelete: "cascade" }),
   status: text("status").notNull(),
-  completionDate: timestamp("completion_date").defaultNow().notNull(),
+  closedAt: timestamp("closed_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
   xpEarned: integer("xp_earned").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .notNull()
+    .$onUpdateFn(() => new Date()),
 });

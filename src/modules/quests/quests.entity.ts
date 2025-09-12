@@ -1,4 +1,6 @@
+import type { InferSelectModel } from "drizzle-orm";
 import z from "zod";
+import type { quests } from "../../db/schemas/quests";
 
 export const createQuestSchema = z
   .object({
@@ -31,16 +33,4 @@ export const updateQuestSchema = z
 
 export type UpdateQuestInput = z.infer<typeof updateQuestSchema>;
 
-export interface QuestEntity {
-  id: string;
-  characterId: string;
-  name: string;
-  description?: string;
-  type: string;
-  difficulty: string;
-  isPaused: boolean;
-  dueDate?: Date;
-  frequency?: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+export type QuestEntity = InferSelectModel<typeof quests>;

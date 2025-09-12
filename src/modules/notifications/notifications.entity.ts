@@ -1,4 +1,6 @@
+import type { InferSelectModel } from "drizzle-orm";
 import z from "zod";
+import type { notifications } from "../../db/schemas/notifications";
 
 export const updateNotificationSchema = z.object({
   id: z.uuid("Invalid id"),
@@ -12,12 +14,4 @@ export const updateNotificationSchema = z.object({
 
 export type UpdateNotificationInput = z.infer<typeof updateNotificationSchema>;
 
-export interface NotificationEntity {
-  id: string;
-  characterId: string;
-  title: string;
-  description: string;
-  type: string;
-  isRead: boolean;
-  createdAt: Date;
-}
+export type NotificationEntity = InferSelectModel<typeof notifications>;
