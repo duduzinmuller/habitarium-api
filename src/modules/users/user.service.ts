@@ -80,6 +80,7 @@ export class UserService {
       ...user,
       ...input,
       passwordHash: newPasswordHash,
+      createdAt: user.createdAt,
       updatedAt: new Date(),
     };
 

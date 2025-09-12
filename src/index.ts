@@ -14,6 +14,8 @@ async function main() {
 
   await app.ready();
 
+  console.log(app.printRoutes());
+
   try {
     await app.listen({ port, host });
   } catch (err) {
