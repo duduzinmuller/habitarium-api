@@ -18,16 +18,12 @@ export type CreateQuestInput = z.infer<typeof createQuestSchema>;
 export const updateQuestSchema = z
   .object({
     id: z.uuid("Invalid id"),
-    characterId: z.uuid("Invalid characterId").optional(),
     name: z.string("Name must be a string").optional(),
     description: z.string("Description must be a string").optional(),
-    type: z.string("Type must be a string").optional(),
     difficulty: z.string("Difficulty must be a string").optional(),
     isPaused: z.boolean("isPaused must be a boolean").optional(),
     dueDate: z.coerce.date("Invalid dueDate").optional(),
     frequency: z.string("Frequency must be a string").optional(),
-    createdAt: z.coerce.date("Invalid createdAt").optional(),
-    updatedAt: z.coerce.date("Invalid updatedAt").optional(),
   })
   .strict();
 
