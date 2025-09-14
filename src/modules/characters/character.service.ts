@@ -1,7 +1,7 @@
 import {
   ConflictError,
+  DatabaseError,
   ForbiddenError,
-  InternalError,
   NotFoundError,
 } from "../../utils/error-handler";
 import type { UserPublic } from "../users/user.entity";
@@ -63,9 +63,8 @@ export class CharacterService {
     };
 
     const created = await this.repo.create(newCharacter);
-
     if (!created) {
-      throw new InternalError("Failed to create character");
+      throw new DatabaseError("Failed to persist character create");
     }
 
     return created;
@@ -75,17 +74,17 @@ export class CharacterService {
     characterId: string,
     userToken: UserPublic
   ): Promise<void> {
-    const character = await this.repo.findById(characterId);
-    if (!character) {
-      throw new NotFoundError("Character not found");
-    }
+    const character = await this.findById(characterId);
+
     if (character.userId !== userToken.id) {
       throw new ForbiddenError("You are not allowed to delete this character");
     }
+
     const deleted = await this.repo.delete(characterId);
     if (!deleted) {
-      throw new NotFoundError("Character not found");
+      throw new DatabaseError("Failed to persist character delete");
     }
+
     return;
   }
 
@@ -95,20 +94,25 @@ export class CharacterService {
     userToken: UserPublic
   ): Promise<CharacterEntity> {
     const character = await this.repo.findById(characterId);
+
     if (!character) {
       throw new NotFoundError("Character not found");
     }
+
     if (character.userId !== userToken.id) {
       throw new ForbiddenError("You are not allowed to update this character");
     }
+
     const updatedCharacter: CharacterEntity = {
       ...character,
       profilePicture: data.profilePicture ?? character.profilePicture,
     };
+
     const updated = await this.repo.update(updatedCharacter);
     if (!updated) {
-      throw new NotFoundError("Character not found");
+      throw new DatabaseError("Failed to persist character update");
     }
+
     return updated;
   }
 }

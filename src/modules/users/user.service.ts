@@ -1,8 +1,8 @@
 import { hashPassword } from "../../utils/auth/hash-password";
 import {
   ConflictError,
+  DatabaseError,
   ForbiddenError,
-  InternalError,
   NotFoundError,
   UnprocessableEntityError,
 } from "../../utils/error-handler";
@@ -29,10 +29,12 @@ export class UserService {
     if (userId !== userToken.id) {
       throw new ForbiddenError("You are not allowed to get this user");
     }
+
     const user = await this.repo.findPublicById(userId);
     if (!user) {
       throw new NotFoundError("User not found", { details: { userId } });
     }
+
     return user;
   }
 
@@ -54,14 +56,10 @@ export class UserService {
 
     const created = await this.repo.create(newUser);
     if (!created) {
-      throw new InternalError("Failed to create user");
+      throw new DatabaseError("Failed to persist user create");
     }
 
     const character = await this.characterService.create(created);
-
-    if (!character) {
-      throw new InternalError("Failed to character");
-    }
 
     return { user: created, character: character };
   }
@@ -71,15 +69,16 @@ export class UserService {
     data: UpdateUserInput,
     userToken: UserPublic
   ): Promise<UserPublic> {
-    if (userId !== userToken.id) {
+    if (userId !== userToken.id || userId !== data.id) {
       throw new ForbiddenError("You are not allowed to update this user");
     }
-    const foundUser = await this.repo.findById(userId);
-    if (!foundUser) {
+
+    const found = await this.repo.findById(userId);
+    if (!found) {
       throw new NotFoundError("User not found", { details: { id: userId } });
     }
 
-    if (data.email && data.email !== foundUser.email) {
+    if (data.email && data.email !== found.email) {
       const existingUser = await this.repo.findByEmail(data.email);
       if (existingUser && existingUser.id !== userId) {
         throw new ConflictError("Email is already registered", {
@@ -88,25 +87,26 @@ export class UserService {
       }
     }
 
-    let newPasswordHash = foundUser.passwordHash;
+    let newPasswordHash = found.passwordHash;
     if (data.password) {
       newPasswordHash = await hashPassword(data.password);
       delete data.password;
     }
 
     const updatedUser: UserEntity = {
-      ...foundUser,
+      ...found,
       ...data,
       id: userId,
       passwordHash: newPasswordHash,
-      createdAt: foundUser.createdAt,
+      createdAt: found.createdAt,
       updatedAt: new Date(),
     };
 
     const updated = await this.repo.update(updatedUser);
     if (!updated) {
-      throw new InternalError("Failed to update user");
+      throw new DatabaseError("Failed to persist user update");
     }
+
     return updated;
   }
 
@@ -122,8 +122,9 @@ export class UserService {
 
     const deleted = await this.repo.delete(userId);
     if (!deleted) {
-      throw new NotFoundError("User not found");
+      throw new DatabaseError("Failed to persist user delete");
     }
+
     return;
   }
 }

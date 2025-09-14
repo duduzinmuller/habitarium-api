@@ -18,7 +18,7 @@ export const quests = pgTable("quests", {
   sequenceIndex: text("sequence_index"),
   parentId: uuid("parent_id").references((): AnyPgColumn => quests.id),
   name: text("name").notNull(),
-  description: text("description").notNull(),
+  description: text("description"),
   type: text("type").notNull(),
   difficulty: text("difficulty").notNull(),
   dueDate: timestamp("due_date"),

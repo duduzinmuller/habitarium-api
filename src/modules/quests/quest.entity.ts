@@ -10,6 +10,7 @@ export const createQuestSchema = z
     difficulty: z.string("Difficulty is required"),
     dueDate: z.coerce.date("Invalid dueDate").optional(),
     frequency: z.string("Frequency must be a string").optional(),
+    parentId: z.uuid("Invalid parentId").optional(),
   })
   .strict();
 
