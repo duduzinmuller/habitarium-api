@@ -6,7 +6,8 @@ export const characters = pgTable("characters", {
   userId: uuid("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  profilePictureUrl: text("profile_picture_url").notNull(),
+  profilePicture: text("profile_picture"),
+  nickname: text("nickname"),
   currentQuestlineKey: text("current_questline_key ")
     .notNull()
     .default("INITIAL"),

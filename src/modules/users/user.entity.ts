@@ -1,6 +1,7 @@
 import type { InferSelectModel } from "drizzle-orm";
 import { z } from "zod";
 import type { users } from "../../db/schemas/users";
+import type { CharacterEntity } from "../characters/character.entity";
 
 export const createUserSchema = z
   .object({
@@ -33,3 +34,8 @@ export type UpdateUserInput = z.infer<typeof updateUserSchema>;
 export type UserEntity = InferSelectModel<typeof users>;
 
 export type UserPublic = Omit<UserEntity, "passwordHash">;
+
+export type CreatedUser = {
+  user: UserPublic;
+  character: CharacterEntity;
+};

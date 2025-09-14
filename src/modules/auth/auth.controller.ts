@@ -13,7 +13,7 @@ export class AuthController {
   ): Promise<AuthResponse> {
     const data = req.body as CreateUserInput;
     const auth = await this.service.signUp(data);
-    return reply.status(200).send(auth);
+    return reply.status(201).send(auth);
   }
 
   public async signIn(

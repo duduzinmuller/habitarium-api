@@ -1,4 +1,14 @@
 import type { InferSelectModel } from "drizzle-orm";
 import type { characters } from "../../db/schemas/characters";
+import z from "zod";
 
-export type CharacterEntity =  InferSelectModel<typeof characters>;
+export const updateCharacterSchema = z
+  .object({
+    profilePicture: z.string().optional(),
+    nickname: z.string().optional(),
+  })
+  .strict();
+
+export type UpdateCharacterInput = z.infer<typeof updateCharacterSchema>;
+
+export type CharacterEntity = InferSelectModel<typeof characters>;

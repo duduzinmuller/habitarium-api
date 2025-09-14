@@ -1,10 +1,11 @@
 import {
   ConflictError,
+  ForbiddenError,
   InternalError,
   NotFoundError,
 } from "../../utils/error-handler";
 import type { UserPublic } from "../users/user.entity";
-import type { CharacterEntity } from "./character.entity";
+import type { CharacterEntity, UpdateCharacterInput } from "./character.entity";
 import type { CharacterRepository } from "./character.repository";
 
 export class CharacterService {
@@ -25,52 +26,89 @@ export class CharacterService {
     return character;
   }
 
-  public async create(
-    data: { profilePictureUrl: string },
-    user: UserPublic
-  ): Promise<CharacterEntity> {
+  public async findByUserId(userId: string): Promise<CharacterEntity> {
+    const character = await this.repo.findByUserId(userId);
+    if (!character) {
+      throw new NotFoundError("Character not found", {
+        details: { userId },
+      });
+    }
+    return character;
+  }
+
+  public async create(user: UserPublic): Promise<CharacterEntity> {
     const existingCharacter = await this.repo.findByUserId(user.id);
 
     if (existingCharacter) {
       throw new ConflictError("UserId is already registered");
     }
 
-    const characters = await this.repo.findMany();
+    const allCharacters = await this.repo.findMany();
 
-    const character: CharacterEntity = {
+    const newCharacter: CharacterEntity = {
       id: crypto.randomUUID(),
-      profilePictureUrl: data.profilePictureUrl,
+      profilePicture: "INITIAL",
+      nickname: user.name,
       currentQuestlineKey: "INITIAL",
       lastQuestCompletedAt: new Date(),
       level: 0,
       totalXp: 0,
       currentStreak: 0,
       longestStreak: 0,
-      rankingPosition: characters.length + 1,
+      rankingPosition: allCharacters.length + 1,
       badges: [],
       userId: user.id,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
-    const createdCharacter = await this.repo.create(character);
+    const created = await this.repo.create(newCharacter);
 
-    if (!createdCharacter) {
+    if (!created) {
       throw new InternalError("Failed to create character");
     }
 
-    return createdCharacter;
+    return created;
   }
 
-  public async delete(characterId: string): Promise<void> {
-    const existingCharacter = await this.repo.findById(characterId);
-    if (!existingCharacter) {
+  public async delete(
+    characterId: string,
+    userToken: UserPublic
+  ): Promise<void> {
+    const character = await this.repo.findById(characterId);
+    if (!character) {
       throw new NotFoundError("Character not found");
     }
-    const characterDeleted = await this.repo.delete(characterId);
-    if (!characterDeleted) {
+    if (character.userId !== userToken.id) {
+      throw new ForbiddenError("You are not allowed to delete this character");
+    }
+    const deleted = await this.repo.delete(characterId);
+    if (!deleted) {
       throw new NotFoundError("Character not found");
     }
     return;
+  }
+
+  public async update(
+    characterId: string,
+    data: UpdateCharacterInput,
+    userToken: UserPublic
+  ): Promise<CharacterEntity> {
+    const character = await this.repo.findById(characterId);
+    if (!character) {
+      throw new NotFoundError("Character not found");
+    }
+    if (character.userId !== userToken.id) {
+      throw new ForbiddenError("You are not allowed to update this character");
+    }
+    const updatedCharacter: CharacterEntity = {
+      ...character,
+      profilePicture: data.profilePicture ?? character.profilePicture,
+    };
+    const updated = await this.repo.update(characterId, updatedCharacter);
+    if (!updated) {
+      throw new NotFoundError("Character not found");
+    }
+    return updated;
   }
 }

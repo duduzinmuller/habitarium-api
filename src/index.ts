@@ -10,7 +10,7 @@ async function main() {
   const app = Fastify();
 
   await app.register(cors, {
-    origin: "http://localhost:3000",
+    origin: process.env.FRONT_HOST as string,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   });
 

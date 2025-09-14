@@ -28,15 +28,9 @@ export class UserRepository {
     return result;
   }
 
-  public async findByEmail(email: string): Promise<UserPublic | undefined> {
+  public async findByEmail(email: string): Promise<UserEntity | undefined> {
     const [result] = await this.db
-      .select({
-        id: users.id,
-        email: users.email,
-        name: users.name,
-        createdAt: users.createdAt,
-        updatedAt: users.updatedAt,
-      })
+      .select()
       .from(users)
       .where(eq(users.email, email));
     return result;

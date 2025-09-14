@@ -22,7 +22,7 @@ export class CharacterRepository {
     const [result] = await this.db
       .select()
       .from(characters)
-      .where(eq(characters.id, userId));
+      .where(eq(characters.userId, userId));
     return result;
   }
 
