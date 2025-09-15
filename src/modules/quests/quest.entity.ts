@@ -9,11 +9,16 @@ export enum QuestFrequency {
   YEARLY = "YEARLY",
 }
 
+export enum QuestType {
+  HABIT = "HABIT",
+  TASK = "TASK",
+}
+
 export const createQuestSchema = z
   .object({
     name: z.string("Name is required"),
     description: z.string("Description must be a string").optional(),
-    type: z.string("Type is required"),
+    type: z.enum(QuestType),
     difficulty: z.string("Difficulty is required"),
     dueDate: z.coerce.date("Invalid dueDate").optional(),
     frequency: z.enum(QuestFrequency),
@@ -31,7 +36,7 @@ export const updateQuestSchema = z
     difficulty: z.string("Difficulty must be a string").optional(),
     isPaused: z.boolean("isPaused must be a boolean").optional(),
     dueDate: z.coerce.date("Invalid dueDate").optional(),
-    frequency: z.string("Frequency must be a string").optional(),
+    frequency: z.enum(QuestFrequency),
   })
   .strict();
 

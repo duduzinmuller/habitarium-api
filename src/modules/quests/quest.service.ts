@@ -9,6 +9,7 @@ import type {
   CreateQuestInput,
   QuestEntity,
   QuestFrequency,
+  QuestType,
   UpdateQuestInput,
 } from "./quest.entity";
 import type { QuestRepository } from "./quest.repository";
@@ -60,10 +61,11 @@ export class QuestService {
       questlineKind: null,
       sequenceIndex: null,
       isPaused: false,
+      type: data.type as QuestType,
       parentId: data.parentId ?? null,
       description: data.description ?? null,
       dueDate: data.dueDate ?? null,
-      frequency: data.frequency ?? null,
+      frequency: data.frequency as QuestFrequency,
     };
 
     const quest = await this.repo.create(newQuest);

@@ -9,12 +9,14 @@ import {
 } from "drizzle-orm/pg-core";
 import { characters } from "./characters";
 
-const questFrequencyEnum = pgEnum("quest_frequency", [
+export const questFrequencyEnum = pgEnum("quest_frequency", [
   "DAILY",
   "WEEKLY",
   "MONTHLY",
   "YEARLY",
 ]);
+
+export const questTypeEnum = pgEnum("quest_type", ["HABIT", "TASK"]);
 
 export const quests = pgTable("quests", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -27,7 +29,7 @@ export const quests = pgTable("quests", {
   parentId: uuid("parent_id").references((): AnyPgColumn => quests.id),
   name: text("name").notNull(),
   description: text("description"),
-  type: text("type").notNull(),
+  type: questTypeEnum("type").notNull(),
   difficulty: text("difficulty").notNull(),
   dueDate: timestamp("due_date"),
   isPaused: boolean("is_paused").notNull().default(false),
