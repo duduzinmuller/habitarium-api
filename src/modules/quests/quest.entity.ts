@@ -2,6 +2,13 @@ import type { InferSelectModel } from "drizzle-orm";
 import z from "zod";
 import type { quests } from "../../db/schemas/quests";
 
+export enum QuestFrequency {
+  DAILY = "DAILY",
+  WEEKLY = "WEEKLY",
+  MONTHLY = "MONTHLY",
+  YEARLY = "YEARLY",
+}
+
 export const createQuestSchema = z
   .object({
     name: z.string("Name is required"),
@@ -9,7 +16,7 @@ export const createQuestSchema = z
     type: z.string("Type is required"),
     difficulty: z.string("Difficulty is required"),
     dueDate: z.coerce.date("Invalid dueDate").optional(),
-    frequency: z.string("Frequency must be a string").optional(),
+    frequency: z.enum(QuestFrequency),
     parentId: z.uuid("Invalid parentId").optional(),
   })
   .strict();

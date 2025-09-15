@@ -8,6 +8,7 @@ import type { UserPublic } from "../users/user.entity";
 import type {
   CreateQuestInput,
   QuestEntity,
+  QuestFrequency,
   UpdateQuestInput,
 } from "./quest.entity";
 import type { QuestRepository } from "./quest.repository";
@@ -91,7 +92,7 @@ export class QuestService {
       difficulty: data.difficulty ?? found.difficulty,
       dueDate: data.dueDate ?? found.dueDate,
       isPaused: data.isPaused ?? found.isPaused,
-      frequency: data.frequency ?? found.frequency,
+      frequency: (data.frequency as QuestFrequency) ?? found.frequency,
       updatedAt: new Date(),
     };
 

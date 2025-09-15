@@ -1,5 +1,6 @@
 import {
   boolean,
+  pgEnum,
   pgTable,
   text,
   timestamp,
@@ -7,6 +8,13 @@ import {
   type AnyPgColumn,
 } from "drizzle-orm/pg-core";
 import { characters } from "./characters";
+
+const questFrequencyEnum = pgEnum("quest_frequency", [
+  "DAILY",
+  "WEEKLY",
+  "MONTHLY",
+  "YEARLY",
+]);
 
 export const quests = pgTable("quests", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -23,7 +31,7 @@ export const quests = pgTable("quests", {
   difficulty: text("difficulty").notNull(),
   dueDate: timestamp("due_date"),
   isPaused: boolean("is_paused").notNull().default(false),
-  frequency: text("frequency"),
+  frequency: questFrequencyEnum("frequency"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
