@@ -14,12 +14,19 @@ export enum QuestType {
   TASK = "TASK",
 }
 
+export enum QuestDifficulty {
+  EASY = "EASY",
+  MEDIUM = "MEDIUM",
+  HARD = "HARD",
+  LEGENDARY = "LEGENDARY",
+}
+
 export const createQuestSchema = z
   .object({
     name: z.string("Name is required"),
     description: z.string("Description must be a string").optional(),
     type: z.enum(QuestType),
-    difficulty: z.string("Difficulty is required"),
+    difficulty: z.enum(QuestDifficulty),
     dueDate: z.coerce.date("Invalid dueDate").optional(),
     frequency: z.enum(QuestFrequency),
     parentId: z.uuid("Invalid parentId").optional(),

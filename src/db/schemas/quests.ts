@@ -18,6 +18,13 @@ export const questFrequencyEnum = pgEnum("quest_frequency", [
 
 export const questTypeEnum = pgEnum("quest_type", ["HABIT", "TASK"]);
 
+export const questDifficultyEnum = pgEnum("quest_difficulty", [
+  "EASY",
+  "MEDIUM",
+  "HARD",
+  "LEGENDARY",
+]);
+
 export const quests = pgTable("quests", {
   id: uuid("id").defaultRandom().primaryKey(),
   characterId: uuid("character_id")
@@ -30,7 +37,7 @@ export const quests = pgTable("quests", {
   name: text("name").notNull(),
   description: text("description"),
   type: questTypeEnum("type").notNull(),
-  difficulty: text("difficulty").notNull(),
+  difficulty: questDifficultyEnum("difficulty").notNull(),
   dueDate: timestamp("due_date"),
   isPaused: boolean("is_paused").notNull().default(false),
   frequency: questFrequencyEnum("frequency"),
