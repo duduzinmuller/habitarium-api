@@ -6,7 +6,7 @@ import type { QuestEntity } from "./quest.entity";
 export class QuestRepository {
   constructor(private readonly db: Db) {}
 
-  public async findByCharacterId(characterId: string): Promise<QuestEntity[]> {
+  public async findAll(characterId: string): Promise<QuestEntity[]> {
     const result = await this.db
       .select()
       .from(quests)

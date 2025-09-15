@@ -31,6 +31,12 @@ export class QuestService {
     return character;
   }
 
+  public async findAll(userToken: UserPublic): Promise<QuestEntity[]> {
+    const character = await this.findCharacterByUserId(userToken.id);
+    const quests = await this.repo.findAll(character.id);
+    return quests;
+  }
+
   public async findById(
     questId: string,
     userToken: UserPublic

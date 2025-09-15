@@ -3,6 +3,7 @@ import { userRoutes } from "./user.routes";
 import { authRoutes } from "./auth.routes";
 import { verifyAuth } from "../utils/hooks/verify-auth";
 import { characterRoutes } from "./character.routes";
+import { questRoutes } from "./quest.routes";
 
 export async function registerRoutes(app: FastifyInstance) {
   await app.register(authRoutes, { prefix: "/auth" });
@@ -11,5 +12,6 @@ export async function registerRoutes(app: FastifyInstance) {
     privateApp.addHook("preHandler", verifyAuth);
     privateApp.register(userRoutes, { prefix: "/users" });
     privateApp.register(characterRoutes, { prefix: "/characters" });
+    privateApp.register(questRoutes, { prefix: "/quests" });
   });
 }
