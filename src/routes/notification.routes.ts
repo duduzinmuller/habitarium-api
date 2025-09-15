@@ -5,7 +5,7 @@ import { updateNotificationSchema } from "../modules/notifications/notification.
 
 const notificationController = makeNotificationController();
 
-export async function characterRoutes(app: FastifyInstance) {
+export async function notificationRoutes(app: FastifyInstance) {
   app.get("/", async (req, reply) => {
     await notificationController.findAll(req, reply);
   });
