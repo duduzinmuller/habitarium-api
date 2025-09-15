@@ -30,7 +30,7 @@ export class ActivityService {
   }
 
   public async create(
-    data: { questId: string },
+    data: { questId: string; closedAt: Date },
     userToken: UserPublic
   ): Promise<ActivityEntity> {
     const character = await this.characterService.findByUserId(userToken.id);
@@ -41,7 +41,7 @@ export class ActivityService {
       characterId: character.id,
       questId: data.questId,
       status: ActivityStatus.PENDING,
-      closedAt: null,
+      closedAt: data.closedAt,
       createdAt: new Date(),
       updatedAt: new Date(),
       xpEarned: QuestDifficultyXp[quest.difficulty],
@@ -53,5 +53,34 @@ export class ActivityService {
     }
 
     return created;
+  }
+
+  public async complete(
+    activityId: string,
+    userToken: UserPublic
+  ): Promise<ActivityEntity> {
+    const found = await this.findById(activityId, userToken);
+
+    const now = new Date();
+
+    let status: ActivityStatus;
+    if (found.closedAt >= now) {
+      status = ActivityStatus.COMPLETED;
+    } else {
+      status = ActivityStatus.DELAYED;
+    }
+
+    const updatedActivity: ActivityEntity = {
+      ...found,
+      status,
+      updatedAt: now,
+    };
+
+    const quest = await this.repo.update(updatedActivity);
+    if (!quest) {
+      throw new DatabaseError("Failed to persist activity complete");
+    }
+
+    return quest;
   }
 }

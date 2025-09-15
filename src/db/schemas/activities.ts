@@ -18,7 +18,7 @@ export const activities = pgTable("activities", {
     .notNull()
     .references(() => characters.id, { onDelete: "cascade" }),
   status: activityStatusEnum("status").notNull(),
-  closedAt: timestamp("closed_at"),
+  closedAt: timestamp("closed_at").notNull(),
   xpEarned: integer("xp_earned").notNull().default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
