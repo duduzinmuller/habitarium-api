@@ -7,6 +7,7 @@ import type { CharacterService } from "../characters/character.service";
 import type { UserPublic } from "../users/user.entity";
 import type {
   CreateQuestInput,
+  QuestDifficulty,
   QuestEntity,
   QuestFrequency,
   QuestType,
@@ -86,7 +87,7 @@ export class QuestService {
       ...data,
       name: data.name ?? found.name,
       description: data.description ?? found.description,
-      difficulty: data.difficulty ?? found.difficulty,
+      difficulty: (data.difficulty as QuestDifficulty) ?? found.difficulty,
       dueDate: data.dueDate ?? found.dueDate,
       isPaused: data.isPaused ?? found.isPaused,
       frequency: (data.frequency as QuestFrequency) ?? found.frequency,
