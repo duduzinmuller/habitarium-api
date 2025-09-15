@@ -3,7 +3,7 @@ import { characters } from "./characters";
 import { notifications } from "./notifications";
 import { quests } from "./quests";
 import { users } from "./users";
-import { activityQuests } from "./activity-quests";
+import { activityQuests } from "./activities";
 
 export const usersRelations = relations(users, ({ one }) => ({
   character: one(characters, {
