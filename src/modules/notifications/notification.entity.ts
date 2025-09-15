@@ -3,9 +3,15 @@ import z from "zod";
 import type { notifications } from "../../db/schemas/notifications";
 
 export const updateNotificationSchema = z.object({
-  id: z.uuid("Invalid id").optional(),
+  id: z.uuid("Invalid id"),
   isRead: z.boolean("isRead must be a boolean"),
 });
+
+export type CreateNotificationInput = {
+  title: string;
+  description: string;
+  type: string;
+};
 
 export type UpdateNotificationInput = z.infer<typeof updateNotificationSchema>;
 

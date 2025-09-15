@@ -3,8 +3,7 @@ import {
   ForbiddenError,
   NotFoundError,
 } from "../../utils/error-handler";
-import type { CharacterEntity } from "../characters/character.entity";
-import type { CharacterRepository } from "../characters/character.repository";
+import type { CharacterService } from "../characters/character.service";
 import type { UserPublic } from "../users/user.entity";
 import type {
   CreateQuestInput,
@@ -16,23 +15,11 @@ import type { QuestRepository } from "./quest.repository";
 export class QuestService {
   constructor(
     private readonly repo: QuestRepository,
-    private readonly characterRepo: CharacterRepository
+    private readonly characterService: CharacterService
   ) {}
 
-  private async findCharacterByUserId(
-    userId: string
-  ): Promise<CharacterEntity> {
-    const character = await this.characterRepo.findByUserId(userId);
-    if (!character) {
-      throw new ForbiddenError(
-        "You must have a character to perform this action"
-      );
-    }
-    return character;
-  }
-
   public async findAll(userToken: UserPublic): Promise<QuestEntity[]> {
-    const character = await this.findCharacterByUserId(userToken.id);
+    const character = await this.characterService.findByUserId(userToken.id);
     const quests = await this.repo.findAll(character.id);
     return quests;
   }
@@ -41,7 +28,7 @@ export class QuestService {
     questId: string,
     userToken: UserPublic
   ): Promise<QuestEntity> {
-    const character = await this.findCharacterByUserId(userToken.id);
+    const character = await this.characterService.findByUserId(userToken.id);
     const quest = await this.repo.findById(questId);
     if (!quest) {
       throw new NotFoundError("Quest not found", {
@@ -49,9 +36,9 @@ export class QuestService {
       });
     }
     if (character.id !== quest.characterId) {
-      throw new ForbiddenError(
-        "You must have a character to perform this action"
-      );
+      throw new NotFoundError("Quest not found", {
+        details: { questId },
+      });
     }
     return quest;
   }
@@ -60,7 +47,7 @@ export class QuestService {
     data: CreateQuestInput,
     userToken: UserPublic
   ): Promise<QuestEntity> {
-    const character = await this.findCharacterByUserId(userToken.id);
+    const character = await this.characterService.findByUserId(userToken.id);
 
     const newQuest: QuestEntity = {
       ...data,
