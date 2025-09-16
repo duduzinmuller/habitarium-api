@@ -14,10 +14,9 @@ export const questFrequencyEnum = pgEnum("quest_frequency", [
   "DAILY",
   "WEEKLY",
   "MONTHLY",
-  "YEARLY",
 ]);
 
-export const questTypeEnum = pgEnum("quest_type", ["HABIT", "TASK"]);
+export const questTypeEnum = pgEnum("quest_type", ["TASK"]);
 
 export const questDifficultyEnum = pgEnum("quest_difficulty", [
   "EASY",

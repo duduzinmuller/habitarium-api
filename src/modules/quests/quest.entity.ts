@@ -6,11 +6,9 @@ export enum QuestFrequency {
   DAILY = "DAILY",
   WEEKLY = "WEEKLY",
   MONTHLY = "MONTHLY",
-  YEARLY = "YEARLY",
 }
 
 export enum QuestType {
-  HABIT = "HABIT",
   TASK = "TASK",
 }
 
@@ -42,7 +40,7 @@ export const updateQuestSchema = z
     name: z.string("Name must be a string").optional(),
     icon: z.string().optional(),
     description: z.string("Description must be a string").optional(),
-    difficulty: z.string("Difficulty must be a string").optional(),
+    difficulty: z.enum(QuestDifficulty),
     isPaused: z.boolean("isPaused must be a boolean").optional(),
     dueDate: z.coerce.date("Invalid dueDate").optional(),
     frequency: z.enum(QuestFrequency),
