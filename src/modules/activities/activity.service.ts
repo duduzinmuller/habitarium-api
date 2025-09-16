@@ -1,7 +1,6 @@
 import { DatabaseError, NotFoundError } from "../../utils/error-handler";
 import { QuestDifficultyXp } from "../../utils/quests/quest-difficulty-xp";
 import type { CharacterService } from "../characters/character.service";
-import { QuestFrequency, QuestType } from "../quests/quest.entity";
 import type { QuestService } from "../quests/quest.service";
 import type { UserPublic } from "../users/user.entity";
 import { ActivityStatus, type ActivityEntity } from "./activity.entity";
@@ -43,39 +42,29 @@ export class ActivityService {
       ...(await this.questService.findQuestsByQuestline()),
     ];
 
-    const activitiesFromDatabase: ActivityEntity[] =
-      await this.repo.getActivitiesBetweenDates(range, character.id);
-
-    const formatAsDayString = (date: Date) => date.toISOString().slice(0, 10);
-    const startDayString = formatAsDayString(new Date(range.startAt));
-    const endDayString = formatAsDayString(new Date(range.endAt));
+    const activitiesFromDatabase = await this.repo.getActivitiesBetweenDates(
+      range,
+      character.id
+    );
 
     const activitiesResult: ActivityWithVirtual[] = [];
 
+    const startOfDayUTC = (date: Date) => {
+      return new Date(
+        Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+      );
+    };
+
     for (
-      let currentDate = new Date(startDayString);
-      formatAsDayString(currentDate) <= endDayString;
+      let currentDate = startOfDayUTC(range.startAt);
+      currentDate <= startOfDayUTC(range.endAt);
       currentDate.setDate(currentDate.getDate() + 1)
     ) {
-      const currentDayString = formatAsDayString(currentDate);
-      const currentDay = new Date(currentDayString);
-
       for (const quest of characterQuests) {
-        if (quest.isPaused) {
-          const existingPaused = activitiesFromDatabase.find(
-            (activity) =>
-              activity.questId === quest.id &&
-              formatAsDayString(new Date(activity.createdAt)) ===
-                currentDayString
-          );
-          if (existingPaused) activitiesResult.push(existingPaused);
-          continue;
-        }
-
         const existingActivity = activitiesFromDatabase.find(
           (activity) =>
             activity.questId === quest.id &&
-            formatAsDayString(new Date(activity.createdAt)) === currentDayString
+            startOfDayUTC(activity.createdAt) === currentDate
         );
 
         if (existingActivity) {
@@ -83,43 +72,16 @@ export class ActivityService {
           continue;
         }
 
-        let questIsActiveToday = false;
-
-        if (quest.type === QuestType.HABIT) {
-          const referenceDay = new Date(quest.dueDate!);
-
-          switch (quest.frequency) {
-            case QuestFrequency.DAILY:
-              questIsActiveToday = true;
-              break;
-            case QuestFrequency.WEEKLY:
-              questIsActiveToday =
-                currentDay.getUTCDay() === referenceDay.getUTCDay();
-              break;
-            case QuestFrequency.MONTHLY:
-              questIsActiveToday =
-                currentDay.getUTCDate() === referenceDay.getUTCDate();
-              break;
-            case QuestFrequency.YEARLY:
-              questIsActiveToday =
-                currentDay.getUTCMonth() === referenceDay.getUTCMonth() &&
-                currentDay.getUTCDate() === referenceDay.getUTCDate();
-              break;
-            default:
-              break;
-          }
-        }
-
-        if (!questIsActiveToday) continue;
+        if (quest.isPaused) continue;
 
         activitiesResult.push({
           id: crypto.randomUUID(),
-          createdAt: new Date(currentDayString),
-          updatedAt: new Date(currentDayString),
+          createdAt: currentDate,
+          updatedAt: currentDate,
           characterId: character.id,
           questId: quest.id,
           status: ActivityStatus.PENDING,
-          closedAt: new Date(currentDayString),
+          closedAt: currentDate,
           xpEarned: 0,
           isVirtual: true,
         });
