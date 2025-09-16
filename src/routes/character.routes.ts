@@ -27,8 +27,4 @@ export async function characterRoutes(app: FastifyInstance) {
       await characterController.update(req, reply);
     }
   );
-
-  app.delete("/:characterId", async (req, reply) => {
-    await characterController.delete(req, reply);
-  });
 }

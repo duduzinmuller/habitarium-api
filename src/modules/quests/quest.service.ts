@@ -35,7 +35,11 @@ export class QuestService {
   ): Promise<QuestEntity> {
     const character = await this.characterService.findByUserId(authUser.id);
     const quest = await this.repo.findById(questId);
-    if (!quest || character.id !== quest.characterId) {
+    if (!quest) {
+      throw new NotFoundError("Quest not found", {
+        details: { questId },
+      });
+    } else if (!quest.questlineKey && character.id !== quest.characterId) {
       throw new NotFoundError("Quest not found", {
         details: { questId },
       });
