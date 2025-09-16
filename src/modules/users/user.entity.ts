@@ -18,8 +18,12 @@ export type CreateUserInput = z.infer<typeof createUserSchema>;
 export const updateUserSchema = z
   .object({
     id: z.uuid("Invalid id"),
-    name: z.string("Name is required").trim().min(1, "Name is required"),
-    email: z.email("Invalid email"),
+    name: z
+      .string("Name is required")
+      .trim()
+      .min(1, "Name is required")
+      .optional(),
+    email: z.email("Invalid email").optional(),
     password: z
       .string()
       .min(6, "Password must be at least 6 characters")

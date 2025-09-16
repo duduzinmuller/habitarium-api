@@ -97,6 +97,8 @@ export class UserService {
       ...found,
       ...data,
       id: userId,
+      name: data.name ?? found.name,
+      email: data.email ?? found.email,
       passwordHash: newPasswordHash,
       createdAt: found.createdAt,
       updatedAt: new Date(),

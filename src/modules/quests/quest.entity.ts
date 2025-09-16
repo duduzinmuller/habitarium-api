@@ -41,10 +41,10 @@ export const updateQuestSchema = z
     name: z.string("Name must be a string").optional(),
     icon: z.string().optional(),
     description: z.string("Description must be a string").optional(),
-    difficulty: z.enum(QuestDifficulty),
+    difficulty: z.enum(QuestDifficulty).optional(),
     isPaused: z.boolean("isPaused must be a boolean").optional(),
     dueDate: z.coerce.date("Invalid dueDate").optional(),
-    frequency: z.enum(QuestFrequency),
+    frequency: z.enum(QuestFrequency).optional(),
   })
   .strict();
 
