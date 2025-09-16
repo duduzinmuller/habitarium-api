@@ -83,7 +83,7 @@ export class QuestService {
       questlineKind: null,
       sequenceIndex: null,
       isPaused: false,
-      content: null,
+      content: data.content,
       icon: data.icon ?? null,
       type: data.type as QuestType,
       parentId: data.parentId ?? null,
