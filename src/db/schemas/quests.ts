@@ -27,9 +27,9 @@ export const questDifficultyEnum = pgEnum("quest_difficulty", [
 
 export const quests = pgTable("quests", {
   id: uuid("id").defaultRandom().primaryKey(),
-  characterId: uuid("character_id")
-    .notNull()
-    .references(() => characters.id, { onDelete: "cascade" }),
+  characterId: uuid("character_id").references(() => characters.id, {
+    onDelete: "cascade",
+  }),
   questlineKey: text("questline_key"),
   questlineKind: text("questline_kind"),
   sequenceIndex: text("sequence_index"),
