@@ -40,7 +40,7 @@ export const quests = pgTable("quests", {
   description: text("description"),
   type: questTypeEnum("type").notNull(),
   difficulty: questDifficultyEnum("difficulty").notNull(),
-  dueDate: timestamp("due_date"),
+  dueDate: timestamp("due_date").notNull(),
   isPaused: boolean("is_paused").notNull().default(false),
   frequency: questFrequencyEnum("frequency"),
   createdAt: timestamp("created_at").defaultNow().notNull(),

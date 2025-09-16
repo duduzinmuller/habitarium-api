@@ -26,7 +26,7 @@ export const createQuestSchema = z
     type: z.enum(QuestType),
     difficulty: z.enum(QuestDifficulty),
     icon: z.string().optional(),
-    dueDate: z.coerce.date("Invalid dueDate").optional(),
+    dueDate: z.coerce.date("Invalid dueDate"),
     frequency: z.enum(QuestFrequency),
     parentId: z.uuid("Invalid parentId").optional(),
   })

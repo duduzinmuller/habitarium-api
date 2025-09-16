@@ -3,6 +3,7 @@ import {
   ForbiddenError,
   NotFoundError,
 } from "../../utils/error-handler";
+import type { ActivityService } from "../activities/activity.service";
 import type { CharacterService } from "../characters/character.service";
 import type { UserPublic } from "../users/user.entity";
 import type {
@@ -18,7 +19,8 @@ import type { QuestRepository } from "./quest.repository";
 export class QuestService {
   constructor(
     private readonly repo: QuestRepository,
-    private readonly characterService: CharacterService
+    private readonly characterService: CharacterService,
+    private readonly activityService: ActivityService
   ) {}
 
   public async findQuestsByCharacter(
@@ -77,7 +79,7 @@ export class QuestService {
       type: data.type as QuestType,
       parentId: data.parentId ?? null,
       description: data.description ?? null,
-      dueDate: data.dueDate ?? null,
+      dueDate: data.dueDate,
       frequency: data.frequency as QuestFrequency,
     };
 
@@ -85,6 +87,11 @@ export class QuestService {
     if (!quest) {
       throw new DatabaseError("Failed to persist quest");
     }
+
+    await this.activityService.create(
+      { questId: quest.id, closedAt: quest.dueDate },
+      authUser
+    );
 
     return quest;
   }
