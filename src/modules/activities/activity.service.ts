@@ -9,11 +9,20 @@ import type { ActivityRepository } from "./activity.repository";
 type ActivityWithVirtual = ActivityEntity & { isVirtual?: boolean };
 
 export class ActivityService {
+  private _questService?: QuestService;
+
   constructor(
     private readonly repo: ActivityRepository,
     private readonly characterService: CharacterService,
-    private readonly questService: () => QuestService
+    private readonly questServiceFactory: () => QuestService
   ) {}
+
+  private get questService(): QuestService {
+    if (!this._questService) {
+      this._questService = this.questServiceFactory();
+    }
+    return this._questService;
+  }
 
   public async findAll(authUser: UserPublic): Promise<ActivityEntity[]> {
     const character = await this.characterService.findByUserId(authUser.id);
@@ -48,11 +57,10 @@ export class ActivityService {
     authUser: UserPublic
   ): Promise<ActivityWithVirtual[]> {
     const character = await this.characterService.findById(authUser.id);
-    const qs = this.questService();
 
     const characterQuests = [
-      ...(await qs.findQuestsByCharacter(authUser)),
-      ...(await qs.findQuestsByQuestline()),
+      ...(await this.questService.findQuestsByCharacter(authUser)),
+      ...(await this.questService.findQuestsByQuestline()),
     ];
 
     const activitiesFromDatabase = await this.repo.getActivitiesBetweenDates(
@@ -110,8 +118,7 @@ export class ActivityService {
   ): Promise<ActivityEntity> {
     const character = await this.characterService.findByUserId(authUser.id);
 
-    const qs = this.questService();
-    const quest = await qs.findById(data.questId, authUser);
+    const quest = await this.questService.findById(data.questId, authUser);
 
     const newActivity: ActivityEntity = {
       id: crypto.randomUUID(),
