@@ -7,9 +7,13 @@ import {
 import type { UserPublic } from "../users/user.entity";
 import type { CharacterEntity, UpdateCharacterInput } from "./character.entity";
 import type { CharacterRepository } from "./character.repository";
+import type { QuestRepository } from "../quests/quest.repository";
 
 export class CharacterService {
-  constructor(private readonly repo: CharacterRepository) {}
+  constructor(
+    private readonly repo: CharacterRepository,
+    private readonly questRepo: QuestRepository
+  ) {}
 
   private getRequiredXp(level: number): number {
     return Math.floor(50 * Math.pow(level, 1.5));
@@ -38,6 +42,68 @@ export class CharacterService {
       });
     }
     return character;
+  }
+
+  public async findLessonProgress(authUser: UserPublic) {
+    const character = await this.findByUserId(authUser.id);
+    const progress = await this.repo.findLessonProgress(character.id);
+    return progress;
+  }
+
+  public async updateLessonProgress(
+    lessonProgressId: string,
+    progress: number,
+    authUser: UserPublic
+  ) {
+    const character = await this.findByUserId(authUser.id);
+    const lessonProgress = await this.repo.findLessonProgressById(
+      lessonProgressId
+    );
+
+    if (!lessonProgress || lessonProgress.characterId !== character.id) {
+      throw new NotFoundError("Lesson progress not found");
+    }
+
+    // Prepara os dados para uma única atualização
+    const dataToUpdate: Partial<typeof lessonsProgress.$inferInsert> = {
+      progress,
+    };
+
+    if (progress >= 100) {
+      dataToUpdate.completed = true;
+    }
+
+    // Executa a atualização no banco
+    const updatedLp = await this.repo.updateLessonProgress(
+      lessonProgressId,
+      dataToUpdate
+    );
+
+    // Se a lição foi completada, desbloqueia a próxima
+    if (updatedLp?.completed) {
+      const currentLesson = await this.questRepo.findLessonById(
+        lessonProgress.lessonId
+      );
+      if (!currentLesson) return updatedLp;
+
+      const nextLesson = await this.questRepo.findNextLesson(
+        currentLesson.questlineId,
+        currentLesson.sequenceIndex
+      );
+      if (!nextLesson) return updatedLp; // Última lição da questline
+
+      const nextLessonProgress = await this.repo.findLessonProgressByLessonId(
+        character.id,
+        nextLesson.id
+      );
+      if (!nextLessonProgress) return updatedLp;
+
+      await this.repo.updateLessonProgress(nextLessonProgress.id, {
+        locked: false,
+      });
+    }
+
+    return updatedLp;
   }
 
   public async addExperienceCharacter(
@@ -98,6 +164,8 @@ export class CharacterService {
     if (!created) {
       throw new DatabaseError("Failed to persist character create");
     }
+
+    await this.repo.createInitialLessonProgress(created.id);
 
     return created;
   }
