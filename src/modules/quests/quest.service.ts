@@ -144,7 +144,24 @@ export class QuestService {
   }
 
   public async findQuestsByQuestline(): Promise<QuestEntity[]> {
-    const quests = await this.repo.findQuestsByQuestline();
+    const quests = await this.repo.findQuestsByCharacter("");
     return quests;
+  }
+
+  public async findQuestlinesWithLessons() {
+    const result = await this.repo.findQuestlinesWithLessons();
+    return result;
+  }
+
+  public async findLessonById(lessonId: string) {
+    const lesson = await this.repo.findLessonById(lessonId);
+
+    if (!lesson) {
+      throw new NotFoundError("Lesson not found", {
+        details: { lessonId },
+      });
+    }
+
+    return lesson.content;
   }
 }

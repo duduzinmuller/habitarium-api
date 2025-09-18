@@ -51,7 +51,13 @@ export class QuestController {
     _req: FastifyRequest,
     reply: FastifyReply
   ) {
-    const quests = await this.service.findQuestsByQuestline();
-    return reply.status(204).send(quests);
+    const questlines = await this.service.findQuestlinesWithLessons();
+    return reply.status(200).send(questlines);
+  }
+
+  public async findLessonById(req: FastifyRequest, reply: FastifyReply) {
+    const { lessonId } = req.params as { lessonId: string };
+    const lessonContent = await this.service.findLessonById(lessonId);
+    return reply.status(200).send(lessonContent);
   }
 }

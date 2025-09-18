@@ -1,6 +1,7 @@
-import { eq, isNotNull, isNull, and } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import type { Db } from "../../db";
 import { quests } from "../../db/schemas/quests";
+import { lessons, questlines } from "../../db/schemas/questline";
 import type { QuestEntity } from "./quest.entity";
 
 export class QuestRepository {
@@ -16,12 +17,23 @@ export class QuestRepository {
     return result;
   }
 
-  public async findQuestsByQuestline(): Promise<QuestEntity[]> {
-    const result = await this.db
-      .select()
-      .from(quests)
-      .where(and(isNotNull(quests.questlineKey), isNull(quests.parentId)));
-    return result;
+  public async findQuestlinesWithLessons(): Promise<
+    Array<ReturnType<typeof Object.assign>>
+  > {
+    const questlinesResult = await this.db.select().from(questlines);
+    const lessonsResult = await this.db.select().from(lessons);
+
+    const lessonsByQuestlineId = new Map<string, typeof lessonsResult>();
+    for (const l of lessonsResult) {
+      const arr = lessonsByQuestlineId.get(l.questlineId) ?? [];
+      arr.push(l);
+      lessonsByQuestlineId.set(l.questlineId, arr);
+    }
+
+    return questlinesResult.map((ql) => ({
+      ...ql,
+      lessons: lessonsByQuestlineId.get(ql.id) ?? [],
+    }));
   }
 
   public async findChildQuests(questId: string): Promise<QuestEntity[]> {
@@ -38,6 +50,14 @@ export class QuestRepository {
       .from(quests)
       .where(eq(quests.id, questId));
     return result;
+  }
+
+  public async findLessonById(lessonId: string) {
+    const [lesson] = await this.db
+      .select()
+      .from(lessons)
+      .where(eq(lessons.id, lessonId));
+    return lesson;
   }
 
   public async create(data: QuestEntity): Promise<QuestEntity | undefined> {
