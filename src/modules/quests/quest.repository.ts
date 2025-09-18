@@ -60,6 +60,19 @@ export class QuestRepository {
     return lesson;
   }
 
+  public async findNextLesson(questlineId: string, sequenceIndex: number) {
+    const [lesson] = await this.db
+      .select()
+      .from(lessons)
+      .where(
+        and(
+          eq(lessons.questlineId, questlineId),
+          eq(lessons.sequenceIndex, sequenceIndex + 1)
+        )
+      );
+    return lesson;
+  }
+
   public async create(data: QuestEntity): Promise<QuestEntity | undefined> {
     const [result] = await this.db.insert(quests).values(data).returning();
     return result;

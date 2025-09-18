@@ -11,7 +11,7 @@ export function makeQuestController() {
   const questRepo = new QuestRepository(db);
   const activityRepo = new ActivityRepository(db);
   const characterRepo = new CharacterRepository(db);
-  const characterService = new CharacterService(characterRepo);
+  const characterService = new CharacterService(characterRepo, questRepo);
 
   // eslint-disable-next-line prefer-const
   let service: QuestService;
