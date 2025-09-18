@@ -9,6 +9,7 @@ export type CreateNotificationInput = {
 };
 
 export const updateNotificationSchema = z.object({
+  id: z.uuid(),
   isRead: z.boolean("isRead must be a boolean"),
 });
 
