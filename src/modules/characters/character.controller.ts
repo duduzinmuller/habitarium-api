@@ -2,6 +2,7 @@ import type { FastifyRequest, FastifyReply } from "fastify";
 import { assertValidUUID } from "../../utils/validators/uuid-validator";
 import type { CharacterService } from "./character.service";
 import type { UpdateCharacterInput } from "./character.entity";
+import type { UpdateLessonProgressInput } from "../lessons/lesson.entity";
 
 export class CharacterController {
   constructor(private readonly service: CharacterService) {}
@@ -30,6 +31,19 @@ export class CharacterController {
     const authUser = req.user!;
     const progress = await this.service.findLessonProgress(authUser);
     return reply.status(200).send(progress);
+  }
+
+  public async updateLessonProgress(req: FastifyRequest, reply: FastifyReply) {
+    const { lessonProgressId } = req.params as { lessonProgressId: string };
+    assertValidUUID(lessonProgressId, "lessonProgressId");
+    const authUser = req.user!;
+    const { progress } = req.body as UpdateLessonProgressInput;
+    const result = await this.service.updateLessonProgress(
+      lessonProgressId,
+      progress,
+      authUser
+    );
+    return reply.status(200).send(result);
   }
 
   public async update(req: FastifyRequest, reply: FastifyReply) {

@@ -34,6 +34,42 @@ export class CharacterRepository {
     await this.db.insert(lessonsProgress).values(progressToInsert);
   }
 
+  public async findLessonProgressById(id: string) {
+    const [result] = await this.db
+      .select()
+      .from(lessonsProgress)
+      .where(eq(lessonsProgress.id, id));
+    return result;
+  }
+
+  public async findLessonProgressByLessonId(
+    characterId: string,
+    lessonId: string
+  ) {
+    const [result] = await this.db
+      .select()
+      .from(lessonsProgress)
+      .where(
+        and(
+          eq(lessonsProgress.characterId, characterId),
+          eq(lessonsProgress.lessonId, lessonId)
+        )
+      );
+    return result;
+  }
+
+  public async updateLessonProgress(
+    id: string,
+    data: Partial<typeof lessonsProgress.$inferInsert>
+  ) {
+    const [result] = await this.db
+      .update(lessonsProgress)
+      .set(data)
+      .where(eq(lessonsProgress.id, id))
+      .returning();
+    return result;
+  }
+
   public async findById(
     characterId: string
   ): Promise<CharacterEntity | undefined> {
