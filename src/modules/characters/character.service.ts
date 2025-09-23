@@ -8,7 +8,7 @@ import type { UserPublic } from "../users/user.entity";
 import type { CharacterEntity, UpdateCharacterInput } from "./character.entity";
 import type { CharacterRepository } from "./character.repository";
 import type { QuestRepository } from "../quests/quest.repository";
-import type { lessonsProgress } from "../../db/schemas/questline";
+import type { lessonsProgress } from "../../db/schemas/lessons-progress";
 
 export class CharacterService {
   constructor(

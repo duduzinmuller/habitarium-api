@@ -1,12 +1,10 @@
 import { and, asc, eq } from "drizzle-orm";
 import type { Db } from "../../db";
 import { characters } from "../../db/schemas/characters";
-import {
-  lessons,
-  lessonsProgress,
-  questlines,
-} from "../../db/schemas/questline";
+import { questlines } from "../../db/schemas/questline";
 import type { CharacterEntity } from "./character.entity";
+import { lessons } from "../../db/schemas/lessons";
+import { lessonsProgress } from "../../db/schemas/lessons-progress";
 
 export class CharacterRepository {
   constructor(private readonly db: Db) {}

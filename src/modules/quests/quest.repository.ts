@@ -1,8 +1,9 @@
 import { and, eq, isNull } from "drizzle-orm";
 import type { Db } from "../../db";
 import { quests } from "../../db/schemas/quests";
-import { lessons, questlines } from "../../db/schemas/questline";
+import { questlines } from "../../db/schemas/questline";
 import type { QuestEntity } from "./quest.entity";
+import { lessons } from "../../db/schemas/lessons";
 
 export class QuestRepository {
   constructor(private readonly db: Db) {}
