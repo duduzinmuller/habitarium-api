@@ -99,6 +99,40 @@ export class CharacterService {
       }
     }
 
+    // If there is no next lesson, the questline may be completed.
+    // Unlock first lesson of the next questline by sequenceIndex.
+    if (!nextLesson) {
+      const currentLessonFull = await this.questRepo.findLessonById(lessonId);
+      if (currentLessonFull) {
+        const currentQuestline = await this.questRepo.findQuestlineById(
+          currentLessonFull.questlineId
+        );
+        if (currentQuestline) {
+          const nextQuestline =
+            await this.questRepo.findQuestlineBySequenceIndex(
+              currentQuestline.sequenceIndex + 1
+            );
+          if (nextQuestline) {
+            const firstLessonNext = await this.questRepo.findFirstLesson(
+              nextQuestline.id
+            );
+            if (firstLessonNext) {
+              const firstLessonProgress =
+                await this.repo.findLessonProgressByLessonId(
+                  character.id,
+                  firstLessonNext.id
+                );
+              if (firstLessonProgress) {
+                await this.repo.updateLessonProgress(firstLessonProgress.id, {
+                  locked: false,
+                });
+              }
+            }
+          }
+        }
+      }
+    }
+
     return updatedLp;
   }
 

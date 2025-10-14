@@ -33,7 +33,7 @@ export class CharacterRepository {
       })
       .from(lessons)
       .innerJoin(questlines, eq(lessons.questlineId, questlines.id))
-      .orderBy(asc(questlines.createdAt), asc(lessons.sequenceIndex));
+      .orderBy(asc(questlines.sequenceIndex), asc(lessons.sequenceIndex));
 
     if (!allLessons.length) {
       return;
