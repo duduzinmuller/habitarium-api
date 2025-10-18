@@ -2,7 +2,7 @@ import { and, asc, eq } from "drizzle-orm";
 import type { Db } from "../../db";
 import { characters } from "../../db/schemas/characters";
 import { questlines } from "../../db/schemas/questline";
-import type { CharacterEntity } from "./character.entity";
+import type { CharacterEntity, CharacterPublic } from "./character.entity";
 import { lessons } from "../../db/schemas/lessons";
 import { lessonsProgress } from "../../db/schemas/lessons-progress";
 
@@ -109,7 +109,25 @@ export class CharacterRepository {
   }
 
   public async findAll(): Promise<CharacterEntity[]> {
-    const result = await this.db.select().from(characters);
+    const result = await this.db
+      .select()
+      .from(characters)
+      .orderBy(asc(characters.rankingPosition));
+    return result;
+  }
+
+  public async findRanking(): Promise<CharacterPublic[]> {
+    const result = await this.db
+      .select({
+        id: characters.id,
+        nickname: characters.nickname,
+        avatar: characters.avatar,
+        level: characters.level,
+        totalXp: characters.totalXp,
+        rankingPosition: characters.rankingPosition,
+      })
+      .from(characters)
+      .orderBy(asc(characters.rankingPosition));
     return result;
   }
 
