@@ -12,6 +12,7 @@ export class UserRepository {
         id: users.id,
         email: users.email,
         name: users.name,
+        provider: users.provider,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt,
       })
@@ -44,6 +45,7 @@ export class UserRepository {
         id: users.id,
         email: users.email,
         name: users.name,
+        provider: users.provider,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt,
       })
@@ -58,6 +60,7 @@ export class UserRepository {
         id: users.id,
         email: users.email,
         name: users.name,
+        provider: users.provider,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt,
       })
@@ -78,6 +81,7 @@ export class UserRepository {
       id: users.id,
       email: users.email,
       name: users.name,
+      provider: users.provider,
       createdAt: users.createdAt,
       updatedAt: users.updatedAt,
     });
@@ -93,6 +97,7 @@ export class UserRepository {
         id: users.id,
         email: users.email,
         name: users.name,
+        provider: users.provider,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt,
       });

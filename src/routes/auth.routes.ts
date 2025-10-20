@@ -26,4 +26,12 @@ export async function authRoutes(app: FastifyInstance) {
   app.get("/verify-token", async (req, reply) => {
     await authController.verifyToken(req, reply);
   });
+
+  app.get("/supabase/login/:provider", async (req, reply) => {
+    await authController.supabaseLogin(req, reply);
+  });
+
+  app.get("/supabase/callback", async (req, reply) => {
+    await authController.supabaseCallback(req, reply);
+  });
 }

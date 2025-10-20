@@ -26,6 +26,7 @@
     "@fastify/cors": "^11.1.0",
     "@fastify/swagger": "^9.5.1",
     "@fastify/swagger-ui": "^5.2.3",
+    "@supabase/supabase-js": "^2.76.0",
     "@types/pg": "^8.15.5",
     "bcrypt": "^6.0.0",
     "crypto": "^1.0.1",
@@ -36,6 +37,7 @@
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.16.3",
     "postgres": "^3.4.7",
+    "tslib": "^2.8.1",
     "zod": "^4.1.8"
   },
   "devDependencies": {
