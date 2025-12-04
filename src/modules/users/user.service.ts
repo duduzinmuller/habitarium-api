@@ -49,6 +49,7 @@ export class UserService {
       id: crypto.randomUUID(),
       name: data.name,
       email: data.email,
+      provider: "local",
       passwordHash: passwordHash,
       createdAt: new Date(),
       updatedAt: new Date(),

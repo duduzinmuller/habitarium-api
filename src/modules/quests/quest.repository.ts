@@ -1,8 +1,9 @@
-import { and, eq, isNull } from "drizzle-orm";
+import { and, asc, eq, isNull } from "drizzle-orm";
 import type { Db } from "../../db";
 import { quests } from "../../db/schemas/quests";
-import { lessons, questlines } from "../../db/schemas/questline";
+import { questlines } from "../../db/schemas/questline";
 import type { QuestEntity } from "./quest.entity";
+import { lessons } from "../../db/schemas/lessons";
 
 export class QuestRepository {
   constructor(private readonly db: Db) {}
@@ -70,6 +71,32 @@ export class QuestRepository {
           eq(lessons.sequenceIndex, sequenceIndex + 1)
         )
       );
+    return lesson;
+  }
+
+  public async findQuestlineById(questlineId: string) {
+    const [ql] = await this.db
+      .select()
+      .from(questlines)
+      .where(eq(questlines.id, questlineId));
+    return ql;
+  }
+
+  public async findQuestlineBySequenceIndex(sequenceIndex: number) {
+    const [ql] = await this.db
+      .select()
+      .from(questlines)
+      .where(eq(questlines.sequenceIndex, sequenceIndex));
+    return ql;
+  }
+
+  public async findFirstLesson(questlineId: string) {
+    const [lesson] = await this.db
+      .select()
+      .from(lessons)
+      .where(eq(lessons.questlineId, questlineId))
+      .orderBy(asc(lessons.sequenceIndex))
+      .limit(1);
     return lesson;
   }
 

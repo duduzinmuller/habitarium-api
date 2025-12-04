@@ -7,6 +7,11 @@ import type { UpdateLessonProgressInput } from "../lessons/lesson.entity";
 export class CharacterController {
   constructor(private readonly service: CharacterService) {}
 
+  public async getRanking(req: FastifyRequest, reply: FastifyReply) {
+    const ranking = await this.service.getRanking();
+    return reply.status(200).send(ranking);
+  }
+
   public async findById(req: FastifyRequest, reply: FastifyReply) {
     const { characterId } = req.params as { characterId: string };
     assertValidUUID(characterId, "characterId");
@@ -43,6 +48,13 @@ export class CharacterController {
       progress,
       authUser
     );
+    return reply.status(200).send(result);
+  }
+
+  public async completeLesson(req: FastifyRequest, reply: FastifyReply) {
+    const { lessonId } = req.body as { lessonId: string };
+    const authUser = req.user!;
+    const result = await this.service.completeLesson(lessonId, authUser);
     return reply.status(200).send(result);
   }
 

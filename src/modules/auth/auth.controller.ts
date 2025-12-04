@@ -2,10 +2,20 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import type { CreateUserInput } from "../users/user.entity";
 import type { AuthResponse, SignInInput } from "./auth.entity";
 import type { AuthService } from "./auth.service";
+import type {
+  SupabaseAuthService,
+  SupabaseAuthResponse,
+  SupabaseLoginResponse,
+  SupabaseCallbackData,
+  SupportedProvider,
+} from "./supabase-auth.service";
 import { AuthRequiredError } from "../../utils/error-handler";
 
 export class AuthController {
-  constructor(private readonly service: AuthService) {}
+  constructor(
+    private readonly service: AuthService,
+    private readonly supabaseService: SupabaseAuthService
+  ) {}
 
   public async signUp(
     req: FastifyRequest,
@@ -32,5 +42,30 @@ export class AuthController {
     }
     this.service.verifyToken(token);
     return reply.status(200).send();
+  }
+
+  public async supabaseLogin(
+    req: FastifyRequest,
+    reply: FastifyReply
+  ): Promise<SupabaseLoginResponse> {
+    const { provider } = req.params as { provider: SupportedProvider };
+
+    if (!provider || !["google", "facebook", "github"].includes(provider)) {
+      throw new AuthRequiredError(
+        "Provider must be google, facebook, or github"
+      );
+    }
+
+    const response = await this.supabaseService.getLoginUrl(provider);
+    return reply.status(200).send(response);
+  }
+
+  public async supabaseCallback(
+    req: FastifyRequest,
+    reply: FastifyReply
+  ): Promise<SupabaseAuthResponse> {
+    const data = req.query as SupabaseCallbackData;
+    const auth = await this.supabaseService.handleCallback(data);
+    return reply.status(200).send(auth);
   }
 }
