@@ -19,7 +19,7 @@ declare module "fastify" {
 export function verifyAuth(
   req: FastifyRequest,
   _reply: FastifyReply,
-  done: HookHandlerDoneFunction
+  done: HookHandlerDoneFunction,
 ) {
   if (req.routeOptions.config?.isPublic) {
     return done();

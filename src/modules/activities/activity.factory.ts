@@ -18,7 +18,7 @@ export function makeActivityController() {
   const service = new ActivityService(
     repo,
     characterService,
-    () => questService
+    () => questService,
   );
   questService = new QuestService(questRepo, characterService, service);
 
