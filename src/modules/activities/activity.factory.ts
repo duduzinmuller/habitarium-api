@@ -12,7 +12,15 @@ export function makeActivityController() {
   const characterRepo = new CharacterRepository(db);
   const questRepo = new QuestRepository(db);
   const characterService = new CharacterService(characterRepo, questRepo);
-  const questService = new QuestService(questRepo, characterService);
-  const service = new ActivityService(repo, characterService, questService);
+
+  // eslint-disable-next-line prefer-const
+  let questService: QuestService;
+  const service = new ActivityService(
+    repo,
+    characterService,
+    () => questService
+  );
+  questService = new QuestService(questRepo, characterService, service);
+
   return new ActivityController(service);
 }
