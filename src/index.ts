@@ -4,8 +4,8 @@ import { fastifyErrorHandler } from "./utils/error-handler";
 import cors from "@fastify/cors";
 
 async function main() {
-  const port = Number(process.env.API_PORT ?? 3000);
-  const host = process.env.API_HOST!;
+  const port = Number(process.env.PORT) || 8000;
+  const host = "0.0.0.0";
 
   const app = Fastify();
 
